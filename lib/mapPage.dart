@@ -51,13 +51,13 @@ class MapPageState extends State<MapPage> {
       setState(() {
         lat = pos.latitude;
         long = pos.longitude;
-        allMarkers.add(Marker(
+       allMarkers.add(Marker(
           markerId: MarkerId('Vendor1'),
           draggable: false,
           onTap: (){
             print('Marker Tapped');
           },
-          position:LatLng(26.892820,75.835191)
+          position:LatLng(pos.latitude+2.5,pos.longitude+2.5)
         ));
         allMarkers.add(Marker(
             markerId: MarkerId('Vendor2'),
@@ -65,7 +65,7 @@ class MapPageState extends State<MapPage> {
             onTap: (){
               print('Marker Tapped');
             },
-            position:LatLng(26.890749, 75.833427)
+            position:LatLng(pos.latitude+3,pos.longitude+3)
         ));
         allMarkers.add(Marker(
             markerId: MarkerId('Vendor3'),
@@ -73,7 +73,7 @@ class MapPageState extends State<MapPage> {
             onTap: (){
               print('Marker Tapped');
             },
-            position:LatLng(26.887902, 75.818804)
+            position:LatLng(pos.latitude+3.5,pos.longitude+3.5)
         ));
         allMarkers.add(Marker(
             markerId: MarkerId('Vendor4'),
@@ -81,7 +81,7 @@ class MapPageState extends State<MapPage> {
             onTap: (){
               print('Marker Tapped');
             },
-            position:LatLng(26.888457, 75.824716)
+            position:LatLng(pos.latitude+4,pos.longitude+4)
         ));
 
         allMarkers.add(Marker(
@@ -90,7 +90,7 @@ class MapPageState extends State<MapPage> {
             onTap: (){
               print('Marker Tapped');
             },
-            position:LatLng(26.889395, 75.826003)
+            position:LatLng(pos.latitude+4.5,pos.longitude+4.5)
         ));
       });
     });
