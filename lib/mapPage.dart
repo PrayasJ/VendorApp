@@ -32,7 +32,7 @@ class MapPageState extends State<MapPage> {
   MarkerId markerId = new MarkerId("Vendor");
   Marker vendorMarker;
   Map<MarkerId, Marker> vendorMarkerMap = <MarkerId, Marker>{};
-
+  List<Marker> allMarkers=[];
   DatabaseReference vic;
   String uid;
 
@@ -51,6 +51,47 @@ class MapPageState extends State<MapPage> {
       setState(() {
         lat = pos.latitude;
         long = pos.longitude;
+        allMarkers.add(Marker(
+          markerId: MarkerId('Vendor1'),
+          draggable: false,
+          onTap: (){
+            print('Marker Tapped');
+          },
+          position:LatLng(26.892820,75.835191)
+        ));
+        allMarkers.add(Marker(
+            markerId: MarkerId('Vendor2'),
+            draggable: false,
+            onTap: (){
+              print('Marker Tapped');
+            },
+            position:LatLng(26.890749, 75.833427)
+        ));
+        allMarkers.add(Marker(
+            markerId: MarkerId('Vendor3'),
+            draggable: false,
+            onTap: (){
+              print('Marker Tapped');
+            },
+            position:LatLng(26.887902, 75.818804)
+        ));
+        allMarkers.add(Marker(
+            markerId: MarkerId('Vendor4'),
+            draggable: false,
+            onTap: (){
+              print('Marker Tapped');
+            },
+            position:LatLng(26.888457, 75.824716)
+        ));
+
+        allMarkers.add(Marker(
+            markerId: MarkerId('Vendor5'),
+            draggable: false,
+            onTap: (){
+              print('Marker Tapped');
+            },
+            position:LatLng(26.889395, 75.826003)
+        ));
       });
     });
 
@@ -134,7 +175,8 @@ class MapPageState extends State<MapPage> {
             mapController = controller;
             mapCreated = true;
           },
-          markers: Set<Marker>.of(vendorMarkerMap.values)),
+          markers: Set.from(allMarkers),
+      ),
     );
   }
 }
