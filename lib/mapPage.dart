@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:core';
-
+import 'dart:math';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -45,6 +45,7 @@ class MapPageState extends State<MapPage> {
     long = 50.0;
     vendorMarker = new Marker(markerId: markerId);
     vendorMarkerMap[markerId] = vendorMarker;
+    var random = new Random();
     locator
         .getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
         .then((pos) {
@@ -57,7 +58,7 @@ class MapPageState extends State<MapPage> {
           onTap: (){
             print('Marker Tapped');
           },
-          position:LatLng(pos.latitude+2.5,pos.longitude+2.5)
+          position:LatLng(lat+(random.nextDouble()-0.5)/100,long+(random.nextDouble()-0.5)/100)
         ));
         allMarkers.add(Marker(
             markerId: MarkerId('Vendor2'),
@@ -65,7 +66,7 @@ class MapPageState extends State<MapPage> {
             onTap: (){
               print('Marker Tapped');
             },
-            position:LatLng(pos.latitude+3,pos.longitude+3)
+            position:LatLng(lat+(random.nextDouble()-0.5)/100,long+(random.nextDouble()-0.5)/100)
         ));
         allMarkers.add(Marker(
             markerId: MarkerId('Vendor3'),
@@ -73,7 +74,7 @@ class MapPageState extends State<MapPage> {
             onTap: (){
               print('Marker Tapped');
             },
-            position:LatLng(pos.latitude+3.5,pos.longitude+3.5)
+            position:LatLng(lat+(random.nextDouble()-0.5)/100,long+(random.nextDouble()-0.5)/100)
         ));
         allMarkers.add(Marker(
             markerId: MarkerId('Vendor4'),
@@ -81,7 +82,7 @@ class MapPageState extends State<MapPage> {
             onTap: (){
               print('Marker Tapped');
             },
-            position:LatLng(pos.latitude+4,pos.longitude+4)
+            position:LatLng(lat+(random.nextDouble()-0.5)/100,long+(random.nextDouble()-0.5)/100)
         ));
 
         allMarkers.add(Marker(
@@ -90,7 +91,7 @@ class MapPageState extends State<MapPage> {
             onTap: (){
               print('Marker Tapped');
             },
-            position:LatLng(pos.latitude+4.5,pos.longitude+4.5)
+            position:LatLng(lat+(random.nextDouble()-0.5)/100,long+(random.nextDouble()-0.5)/100)
         ));
       });
     });
