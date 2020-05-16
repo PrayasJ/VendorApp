@@ -7,6 +7,7 @@ import 'package:geolocator/geolocator.dart';
 import 'databaseClass.dart';
 import 'homePage.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class MapPage extends StatefulWidget {
   MapPageState createState() => MapPageState();
@@ -32,7 +33,7 @@ class MapPageState extends State<MapPage> {
   MarkerId markerId = new MarkerId("Vendor");
   Marker vendorMarker;
   Map<MarkerId, Marker> vendorMarkerMap = <MarkerId, Marker>{};
-  List<Marker> allMarkers=[];
+  List<Marker> allMarkers = [];
   DatabaseReference vic;
   String uid;
 
@@ -52,47 +53,57 @@ class MapPageState extends State<MapPage> {
       setState(() {
         lat = pos.latitude;
         long = pos.longitude;
-       allMarkers.add(Marker(
-          markerId: MarkerId('Vendor1'),
-          draggable: false,
-          onTap: (){
-            print('Marker Tapped');
-          },
-          position:LatLng(lat+(random.nextDouble()-0.5)/100,long+(random.nextDouble()-0.5)/100)
-        ));
+        allMarkers.add(Marker(
+            markerId: MarkerId('Vendor1'),
+            draggable: false,
+            onTap: () {
+              print('Marker Tapped');
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => display_items()));
+            },
+            position: LatLng(lat + (random.nextDouble() - 0.5) / 100,
+                long + (random.nextDouble() - 0.5) / 100)));
         allMarkers.add(Marker(
             markerId: MarkerId('Vendor2'),
             draggable: false,
-            onTap: (){
+            onTap: () {
               print('Marker Tapped');
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => display_items()));
             },
-            position:LatLng(lat+(random.nextDouble()-0.5)/100,long+(random.nextDouble()-0.5)/100)
-        ));
+            position: LatLng(lat + (random.nextDouble() - 0.5) / 100,
+                long + (random.nextDouble() - 0.5) / 100)));
         allMarkers.add(Marker(
             markerId: MarkerId('Vendor3'),
             draggable: false,
-            onTap: (){
+            onTap: () {
               print('Marker Tapped');
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => display_items()));
             },
-            position:LatLng(lat+(random.nextDouble()-0.5)/100,long+(random.nextDouble()-0.5)/100)
-        ));
+            position: LatLng(lat + (random.nextDouble() - 0.5) / 100,
+                long + (random.nextDouble() - 0.5) / 100)));
         allMarkers.add(Marker(
             markerId: MarkerId('Vendor4'),
             draggable: false,
-            onTap: (){
+            onTap: () {
               print('Marker Tapped');
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => display_items()));
             },
-            position:LatLng(lat+(random.nextDouble()-0.5)/100,long+(random.nextDouble()-0.5)/100)
-        ));
+            position: LatLng(lat + (random.nextDouble() - 0.5) / 100,
+                long + (random.nextDouble() - 0.5) / 100)));
 
         allMarkers.add(Marker(
             markerId: MarkerId('Vendor5'),
             draggable: false,
-            onTap: (){
+            onTap: () {
               print('Marker Tapped');
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => display_items()));
             },
-            position:LatLng(lat+(random.nextDouble()-0.5)/100,long+(random.nextDouble()-0.5)/100)
-        ));
+            position: LatLng(lat + (random.nextDouble() - 0.5) / 100,
+                long + (random.nextDouble() - 0.5) / 100)));
       });
     });
 
@@ -166,18 +177,79 @@ class MapPageState extends State<MapPage> {
     }
     return Container(
       child: GoogleMap(
-          initialCameraPosition: CameraPosition(
-            target: LatLng(lat, long),
-            zoom: 15,
-          ),
-          buildingsEnabled: false,
-          myLocationEnabled: true,
-          onMapCreated: (controller) {
-            mapController = controller;
-            mapCreated = true;
-          },
-          markers: Set.from(allMarkers),
+        initialCameraPosition: CameraPosition(
+          target: LatLng(lat, long),
+          zoom: 15,
+        ),
+        buildingsEnabled: false,
+        myLocationEnabled: true,
+        onMapCreated: (controller) {
+          mapController = controller;
+          mapCreated = true;
+        },
+        markers: Set.from(allMarkers),
       ),
+    );
+  }
+}
+
+class display_items extends StatefulWidget {
+  @override
+  _display_itemsState createState() => _display_itemsState();
+}
+
+class _display_itemsState extends State<display_items> {
+  // int i=0;
+  TextEditingController _controller = new TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('List'),
+        backgroundColor: Colors.red,
+      ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.red,
+        child: Icon(Icons.shopping_cart),
+        onPressed: () {},
+      ),
+      body: StreamBuilder(
+          stream: Firestore.instance.collection('Vendors').snapshots(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) return Text('Loading..');
+            return ListView.builder(
+              itemCount: snapshot.data.documents.length,
+              itemBuilder: (BuildContext context, int i) {
+                return Card(
+                    child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    ListTile(
+                      leading: Icon(Icons.album),
+                      title: Text(snapshot.data.documents[i]['Product']),
+                      subtitle: Text(snapshot.data.documents[i]['Product_cost']
+                          .toString()),
+                    ),
+                    TextField(
+                      keyboardType: TextInputType.number,
+                      controller: _controller,
+                      decoration: InputDecoration(
+                        hintText: "Enter Quantity",
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(5.0),
+                          borderSide: BorderSide(
+                            color: Colors.red,
+                            style: BorderStyle.solid,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ));
+              },
+            );
+          }),
     );
   }
 }
