@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:VendorApp/profileDetails.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
 
 class ProfilePage extends StatefulWidget {
-  String name, address, mobileNo, email, gender;
-  ProfilePage(this.name, this.address, this.mobileNo, this.email, this.gender);
+  FirebaseUser user;
+  ProfilePage(this.user);
   ProfilePageState createState() => ProfilePageState();
 }
 
@@ -15,17 +18,14 @@ class ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Column(
-        children: <Widget>[
-          Container(
-            height: MediaQuery.of(context).size.height * 0.3,
-            decoration: BoxDecoration(
-                gradient:
-                    LinearGradient(colors: [Colors.grey, Colors.grey[200]])),
-          )
-        ],
-      ),
+    return Scaffold(
+        appBar: AppBar(
+          title: Text("Profile"),
+          backgroundColor: Colors.blueAccent.withOpacity(0.7),
+          elevation: 0,
+        ),
+        body: ProfileEditScreen(widget.user),
+
     );
   }
 }

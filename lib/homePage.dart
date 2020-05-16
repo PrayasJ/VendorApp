@@ -97,7 +97,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
             if (snapshot.connectionState == ConnectionState.done) {
               List<dynamic> dataLis = snapshot.data;
               return ProfilePage(
-                  dataLis[0], dataLis[1], dataLis[2], dataLis[3], dataLis[4]);
+                  auth.user);
             } else {
               return Container(
                 child: Center(
