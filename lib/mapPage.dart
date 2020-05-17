@@ -1,10 +1,11 @@
 import 'dart:async';
 import 'dart:core';
 import 'dart:math';
-import 'package:VendorApp/cart_display.dart';
-import 'package:VendorApp/cart_helper.dart';
-import 'package:VendorApp/cart_icon.dart';
-import 'package:VendorApp/item_model.dart';
+import 'package:VendorApp/cart/cart_display.dart';
+import 'package:VendorApp/cart/cart_helper.dart';
+import 'package:VendorApp/cart/cart_icon.dart';
+import 'package:VendorApp/cart/item_model.dart';
+import 'package:VendorApp/cart/quantity_input.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/material.dart';
@@ -200,7 +201,6 @@ class _display_itemsState extends State<display_items> {
     FirebaseAuth.instance.currentUser().then((FirebaseUser user) {
       CartHelper.instance.initializeCart(user.uid).then((ready) {
         id = user.uid;
-        print('Initialise Iddddddddddddddddddddddddddddddddddddddd');
         setState(() {});
       });
     });
@@ -268,19 +268,20 @@ class _display_itemsState extends State<display_items> {
                                 },
                               ),
                             ),
-                            TextField(
-                                keyboardType: TextInputType.number,
-                                controller: _controller,
-                                decoration: InputDecoration(
-                                  hintText: "Enter Quantity",
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(5.0),
-                                    borderSide: BorderSide(
-                                      color: Colors.red,
-                                      style: BorderStyle.solid,
-                                    ),
-                                  ),
-                                )),
+                            QuantityInput(controller: _controller),
+                            // TextField(
+                            //     keyboardType: TextInputType.number,
+                            //     controller: _controller,
+                            //     decoration: InputDecoration(
+                            //       hintText: "Enter Quantity",
+                            //       border: OutlineInputBorder(
+                            //         borderRadius: BorderRadius.circular(5.0),
+                            //         borderSide: BorderSide(
+                            //           color: Colors.red,
+                            //           style: BorderStyle.solid,
+                            //         ),
+                            //       ),
+                            //     )),
                           ],
                         ));
                       });
