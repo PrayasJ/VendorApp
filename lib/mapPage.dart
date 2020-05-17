@@ -41,6 +41,7 @@ class MapPageState extends State<MapPage> {
 
   //Auth auth = new Auth();
 
+
   @override
   void initState() {
     //vendorMarkerSet.add(vendorMarker);
@@ -53,74 +54,13 @@ class MapPageState extends State<MapPage> {
     long = 50.0;
     vendorMarker = new Marker(markerId: markerId);
     vendorMarkerMap[markerId] = vendorMarker;
-    var random = new Random();
     locator
         .getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
         .then((pos) {
       setState(() {
         lat = pos.latitude;
         long = pos.longitude;
-        allMarkers.add(Marker(
-            markerId: MarkerId('Vendor1'),
-            draggable: false,
-            icon: pinLocationIcon,
-            onTap: () {
-              print('Marker Tapped');
-              index=0;
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => display_items()));
-            },
-            position: LatLng(lat + (random.nextDouble() - 0.5) / 100,
-                long + (random.nextDouble() - 0.5) / 100)));
-        allMarkers.add(Marker(
-            markerId: MarkerId('Vendor2'),
-            draggable: false,
-            icon: pinLocationIcon,
-            onTap: () {
-              print('Marker Tapped');
-              index=1;
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => display_items()));
-            },
-            position: LatLng(lat + (random.nextDouble() - 0.5) / 100,
-                long + (random.nextDouble() - 0.5) / 100)));
-        allMarkers.add(Marker(
-            markerId: MarkerId('Vendor3'),
-            icon: pinLocationIcon,
-            draggable: false,
-            onTap: () {
-              print('Marker Tapped');
-              index=2;
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => display_items()));
-            },
-            position: LatLng(lat + (random.nextDouble() - 0.5) / 100,
-                long + (random.nextDouble() - 0.5) / 100)));
-        allMarkers.add(Marker(
-            markerId: MarkerId('Vendor4'),
-            icon: pinLocationIcon,
-            draggable: false,
-            onTap: () {
-              print('Marker Tapped');
-              index=3;
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => display_items()));
-            },
-            position: LatLng(lat + (random.nextDouble() - 0.5) / 100,
-                long + (random.nextDouble() - 0.5) / 100)));
-
-        allMarkers.add(Marker(
-            markerId: MarkerId('Vendor5'),
-            icon: pinLocationIcon,
-            draggable: false,
-            onTap: () {
-              print('Marker Tapped');
-              index=4;
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => display_items()));
-            },
-            position: LatLng(lat + (random.nextDouble() - 0.5) / 100,
-                long + (random.nextDouble() - 0.5) / 100)));
+        addMarkers();
       });
     });
 
@@ -145,6 +85,7 @@ class MapPageState extends State<MapPage> {
       });
     });
 
+
     streamSub = locator
         .getPositionStream(LocationOptions(
             accuracy: LocationAccuracy.best, distanceFilter: 10))
@@ -157,6 +98,25 @@ class MapPageState extends State<MapPage> {
     });
     super.initState();
   }
+
+  @override
+void addMarkers(){
+  var random = new Random();
+  for (int i=1;i<=5;i++){
+            allMarkers.add(Marker(
+            markerId: MarkerId('Vendor$i'),
+            icon: pinLocationIcon,
+            draggable: false,
+            onTap: () {
+              print('Marker Tapped');
+              index=i-1;
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => display_items()));
+            },
+            position: LatLng(lat + (random.nextDouble() - 0.5) / 100,
+                long + (random.nextDouble() - 0.5) / 100)));
+  }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -210,10 +170,21 @@ class MapPageState extends State<MapPage> {
   }
 }
 
+List<int> count;
+
+int countInit(DocumentSnapshot document){
+  count = [];
+  for(int i=0;i<document.data.length;i++){
+    count.add(0);
+  }
+  return document.data.length;
+}
+
 class display_items extends StatefulWidget {
   @override
   _display_itemsState createState() => _display_itemsState();
 }
+
 
 class _display_itemsState extends State<display_items> {
   // int i=0;
@@ -235,32 +206,43 @@ class _display_itemsState extends State<display_items> {
           builder: (context, snapshot) {
             if (!snapshot.hasData) return Text('Loading..');
             return ListView.builder(
-              //itemCount: snapshot.data.documents.length,
-              itemCount: snapshot.data.documents[index].data.length,
+              itemCount: countInit(snapshot.data.documents[index]),
               itemBuilder: (BuildContext context, int i) {
                 return Card(
                     child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     ListTile(
-                      leading: Icon(Icons.album),
+                      //leading: Icon(Icons.album),
                       title: Text(snapshot.data.documents[index]['Product${i+1}']['name']),
                       subtitle: Text("Rs. "+snapshot.data.documents[index]['Product${i+1}']['cost']
                           .toString()),
                     ),
-                    TextField(
-                      keyboardType: TextInputType.number,
-                      controller: _controller,
-                      decoration: InputDecoration(
-                        hintText: "Enter Quantity",
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5.0),
-                          borderSide: BorderSide(
-                            color: Colors.red,
-                            style: BorderStyle.solid,
-                          ),
+                    Row(
+                      mainAxisAlignment:MainAxisAlignment.spaceEvenly,
+                      children: <Widget>[
+                        FloatingActionButton(
+                          child: Icon(Icons.add_circle_outline),
+                          backgroundColor: Colors.black,
+                          
+                          onPressed: () {
+                            setState(() {
+                              count[i]++;
+                            });
+                            },
                         ),
-                      ),
+                        FloatingActionButton(
+                          child: Icon(Icons.remove_circle_outline),
+                          backgroundColor: Colors.black,
+                          onPressed: () {
+                            setState(() {
+                              count[i]-=count[i]>0?1:0;
+                            });
+                            },
+                        ),
+                        Text('${count[i]}'),
+                        SizedBox(width: 20),
+                      ],
                     ),
                   ],
                 ));

@@ -75,7 +75,7 @@ class OpeningScreenState extends State<OpeningScreen> {
           decoration: BoxDecoration(
           image: DecorationImage(
             image: AssetImage(
-                'images/logo.png'),
+                'images/splash.png'),
             fit: BoxFit.fill,
           ),
         ),
