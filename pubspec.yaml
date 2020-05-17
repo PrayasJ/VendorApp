@@ -28,6 +28,10 @@ dependencies:
   google_maps_flutter: 
   rect_getter:
   cloud_firestore: ^0.13.5
+  toast: ^0.1.5
+  intl: ^0.16.1
+  flutter_form_builder: ^3.10.0
+  # firebase_ui: ^1.0.8
   rxdart: ^0.24.1
   shared_preferences: ^0.5.3+5 
 
