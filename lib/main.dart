@@ -68,7 +68,18 @@ class OpeningScreenState extends State<OpeningScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
+      body: Center(
+        child: Container(
+          height: MediaQuery.of(context).size.height/2,
+          width: MediaQuery.of(context).size.width,
+          decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage(
+                'images/dable.png'),
+            fit: BoxFit.fill,
+          ),
+        ),
+    ),
       ),
     );
   }
