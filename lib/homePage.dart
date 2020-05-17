@@ -97,7 +97,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
             if (snapshot.connectionState == ConnectionState.done) {
               List<dynamic> dataLis = snapshot.data;
               return ProfilePage(
-                  auth.user);
+                  dataLis[0], dataLis[1], dataLis[2], dataLis[3], dataLis[4]);
             } else {
               return Container(
                 child: Center(
@@ -153,8 +153,6 @@ Widget transition(double val){
                     icon: Icon(Icons.home,color:_selectedIndex==0?Colors.blue:Colors.white), title: Text("Home",style:TextStyle(color:_selectedIndex==0?Colors.blue:Colors.white))),
                 BottomNavigationBarItem(
                     icon: Icon(Icons.person_pin,color:_selectedIndex==1?Colors.blue:Colors.white), title: Text("Profile",style:TextStyle(color:_selectedIndex==1?Colors.blue:Colors.white))),
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.event,color:_selectedIndex==2?Colors.blue:Colors.white), title: Text("Events",style:TextStyle(color:_selectedIndex==2?Colors.blue:Colors.white))),
               ],
               currentIndex: _selectedIndex,
               onTap: (index) {
