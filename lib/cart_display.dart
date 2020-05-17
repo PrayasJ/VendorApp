@@ -21,14 +21,16 @@ class _CartDisplayState extends State<CartDisplay> {
     List<VendorItemModel> items = [];
     List<int> quantities = [];
     _error = false;
-    Future.forEach(CartHelper.instance.cartItems, (CartItemModel cartItem) async {
+    Future.forEach(CartHelper.instance.cartItems,
+        (CartItemModel cartItem) async {
       DocumentReference docRef =
           Firestore.instance.collection('Vendors').document(cartItem.vendorId);
       DocumentSnapshot ds = await docRef.get();
       VendorItemModel vItem = VendorItemModel(
-          id: ds.documentID,
-          name: ds.data[cartItem.productId]['name'],
-          price: ds.data[cartItem.productId]['cost'],);
+        id: ds.documentID,
+        name: ds.data[cartItem.productId]['name'],
+        price: ds.data[cartItem.productId]['cost'],
+      );
       items.add(vItem);
       quantities.add(cartItem.quantity);
     }).whenComplete(() {
@@ -43,19 +45,22 @@ class _CartDisplayState extends State<CartDisplay> {
   }
 
   Widget getMainBody() {
-    return ListView.builder(
-      itemCount: _items.length,
-      itemBuilder: (context, i) {
-        int p = _items[i].price;
-        int q = _quantities[i];
-        return ListTile(
-          title: Text(_items[i].name??''),
-          subtitle: Text("Price : $p\nQuantity : $q"),
-          isThreeLine: true,
-          trailing: Text("Rs.${p * q}"),
-        );
-      },
-    );
+    if (_items.length > 0)
+      return ListView.builder(
+        itemCount: _items.length,
+        itemBuilder: (context, i) {
+          int p = _items[i].price;
+          int q = _quantities[i];
+          return ListTile(
+            title: Text(_items[i].name ?? ''),
+            subtitle: Text("Price : $p\nQuantity : $q"),
+            isThreeLine: true,
+            trailing: Text("Rs.${p * q}"),
+          );
+        },
+      );
+    else
+      return Center(child: Text('Cart is Empty'));
   }
 
   @override

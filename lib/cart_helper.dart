@@ -13,7 +13,6 @@ class CartHelper {
     _uid = uid;
     if (_cartItems == null) {
       List<CartItemModel> cartItems = [];
-      //TODO: Fetch cart data from firestore and assign it ro _cartItems
       Firestore.instance
           .collection('Cart')
           .document(uid)
@@ -40,13 +39,13 @@ class CartHelper {
   Future<void> addToCart(CartItemModel item) {
     assert(_cartItems != null);
     _cartBloc.addToCart();
-    //TODO: Upload data to firestore and add item to _cartItem
     return Firestore.instance
         .collection('Cart')
         .document(_uid)
-        .setData({'${item.vendorId}###${item.productId}': item.quantity}, merge: true).then((_) {
+        .setData({'${item.vendorId}###${item.productId}': item.quantity}, merge: true).then((_) async {
       print('Added to cart');
-      _cartItems.add(item);
+      _cartItems = null;
+      await initializeCart(_uid);
     }).catchError((e) {
       print("Failed to add to cart!");
       _cartBloc.removeFromCart();
@@ -56,13 +55,13 @@ class CartHelper {
   Future<void> removeFromCart(CartItemModel item) {
     assert(_cartItems != null);
     _cartBloc.removeFromCart();
-    //TODO: Delete data from firestore and remove item from _cartItem
     return Firestore.instance
         .collection('Cart')
         .document(_uid)
-        .updateData({'${item.vendorId}###${item.productId}': FieldValue.delete()}).then((_) {
+        .updateData({'${item.vendorId}###${item.productId}': FieldValue.delete()}).then((_) async {
       print('Removed to cart');
-      _cartItems.remove(item);
+      _cartItems = null;
+      await initializeCart(_uid);
     }).catchError((e) {
       print("Failed to remove from cart!");
       _cartBloc.addToCart();
