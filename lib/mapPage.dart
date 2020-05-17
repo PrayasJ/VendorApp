@@ -1,6 +1,11 @@
 import 'dart:async';
 import 'dart:core';
 import 'dart:math';
+import 'package:VendorApp/cart_display.dart';
+import 'package:VendorApp/cart_helper.dart';
+import 'package:VendorApp/cart_icon.dart';
+import 'package:VendorApp/item_model.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -200,7 +205,18 @@ class display_items extends StatefulWidget {
 
 class _display_itemsState extends State<display_items> {
   // int i=0;
-  TextEditingController _controller = new TextEditingController();
+  String id;
+
+  @override
+  void initState() {
+    FirebaseAuth.instance.currentUser().then((FirebaseUser user) {
+      CartHelper.instance.initializeCart(user.uid).whenComplete(() {
+        id = user.uid;
+        setState(() {});
+      });
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -211,45 +227,75 @@ class _display_itemsState extends State<display_items> {
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.red,
-        child: Icon(Icons.shopping_cart),
-        onPressed: () {},
+        child: CartIcon(),
+        onPressed: () {
+          if (id != null)
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => CartDisplay(
+                  uid: id,
+                ),
+              ),
+            );
+        },
       ),
-      body: StreamBuilder(
-          stream: Firestore.instance.collection('Vendors').snapshots(),
-          builder: (context, snapshot) {
-            if (!snapshot.hasData) return Text('Loading..');
-            return ListView.builder(
-              itemCount: snapshot.data.documents.length,
-              itemBuilder: (BuildContext context, int i) {
-                return Card(
-                    child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    ListTile(
-                      leading: Icon(Icons.album),
-                      title: Text(snapshot.data.documents[i]['Product']),
-                      subtitle: Text(snapshot.data.documents[i]['Product_cost']
-                          .toString()),
-                    ),
-                    TextField(
-                      keyboardType: TextInputType.number,
-                      controller: _controller,
-                      decoration: InputDecoration(
-                        hintText: "Enter Quantity",
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5.0),
-                          borderSide: BorderSide(
-                            color: Colors.red,
-                            style: BorderStyle.solid,
+      body: id == null
+          ? Center(child: CircularProgressIndicator())
+          : StreamBuilder<DocumentSnapshot>(
+              stream: Firestore.instance
+                  .collection('Vendors')
+                  .document('dXsb8OZVRbdRqoMIg1Ku')
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) return Text('Loading..');
+                List<Widget> _items = [];
+                snapshot.data.data.forEach((key, value) {
+                  TextEditingController _controller =
+                      new TextEditingController();
+                  _items.add(Card(
+                      child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      ListTile(
+                        leading: Icon(Icons.album),
+                        title: Text(value['name']),
+                        subtitle: Text(
+                          value['cost'].toString(),
+                        ),
+                        trailing: IconButton(
+                          icon: Icon(Icons.add_shopping_cart),
+                          color: Colors.red,
+                          onPressed: () {
+                            CartItemModel item = CartItemModel(
+                              vendorId: snapshot.data.documentID,
+                              productId: key,
+                              quantity: int.parse(_controller.text),
+                            );
+                            CartHelper.instance.addToCart(item);
+                          },
+                        ),
+                      ),
+                      TextField(
+                        keyboardType: TextInputType.number,
+                        controller: _controller,
+                        decoration: InputDecoration(
+                          hintText: "Enter Quantity",
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5.0),
+                            borderSide: BorderSide(
+                              color: Colors.red,
+                              style: BorderStyle.solid,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
-                ));
-              },
-            );
-          }),
+                    ],
+                  )));
+                });
+                return ListView(
+                  children: _items,
+                );
+              }),
     );
   }
 }

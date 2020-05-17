@@ -34,22 +34,10 @@
 @import firebase_storage;
 #endif
 
-#if __has_include(<flutter_facebook_login/FacebookLoginPlugin.h>)
-#import <flutter_facebook_login/FacebookLoginPlugin.h>
-#else
-@import flutter_facebook_login;
-#endif
-
 #if __has_include(<flutter_keyboard_visibility/KeyboardVisibilityPlugin.h>)
 #import <flutter_keyboard_visibility/KeyboardVisibilityPlugin.h>
 #else
 @import flutter_keyboard_visibility;
-#endif
-
-#if __has_include(<flutter_twitter/TwitterLoginPlugin.h>)
-#import <flutter_twitter/TwitterLoginPlugin.h>
-#else
-@import flutter_twitter;
 #endif
 
 #if __has_include(<geolocator/GeolocatorPlugin.h>)
@@ -68,12 +56,6 @@
 #import <google_maps_flutter/GoogleMapsPlugin.h>
 #else
 @import google_maps_flutter;
-#endif
-
-#if __has_include(<google_sign_in/FLTGoogleSignInPlugin.h>)
-#import <google_sign_in/FLTGoogleSignInPlugin.h>
-#else
-@import google_sign_in;
 #endif
 
 #if __has_include(<image_picker/FLTImagePickerPlugin.h>)
@@ -108,13 +90,10 @@
   [FLTFirebaseCorePlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTFirebaseCorePlugin"]];
   [FLTFirebaseDatabasePlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTFirebaseDatabasePlugin"]];
   [FLTFirebaseStoragePlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTFirebaseStoragePlugin"]];
-  [FacebookLoginPlugin registerWithRegistrar:[registry registrarForPlugin:@"FacebookLoginPlugin"]];
   [FLTKeyboardVisibilityPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTKeyboardVisibilityPlugin"]];
-  [TwitterLoginPlugin registerWithRegistrar:[registry registrarForPlugin:@"TwitterLoginPlugin"]];
   [GeolocatorPlugin registerWithRegistrar:[registry registrarForPlugin:@"GeolocatorPlugin"]];
   [GoogleApiAvailabilityPlugin registerWithRegistrar:[registry registrarForPlugin:@"GoogleApiAvailabilityPlugin"]];
   [FLTGoogleMapsPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTGoogleMapsPlugin"]];
-  [FLTGoogleSignInPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTGoogleSignInPlugin"]];
   [FLTImagePickerPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTImagePickerPlugin"]];
   [LocationPermissionsPlugin registerWithRegistrar:[registry registrarForPlugin:@"LocationPermissionsPlugin"]];
   [FLTPathProviderPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTPathProviderPlugin"]];
