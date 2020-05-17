@@ -13,12 +13,14 @@ class MapPage extends StatefulWidget {
   MapPageState createState() => MapPageState();
 }
 
+ int index;
+
 class MapPageState extends State<MapPage> {
   double lat;
   double long;
   GoogleMapController mapController;
+  BitmapDescriptor pinLocationIcon;
   bool mapCreated = false;
-
   DatabaseClass dataBase = new DatabaseClass();
   String vendorData;
 
@@ -42,6 +44,11 @@ class MapPageState extends State<MapPage> {
   @override
   void initState() {
     //vendorMarkerSet.add(vendorMarker);
+    BitmapDescriptor.fromAssetImage(
+         ImageConfiguration(devicePixelRatio: 2.5),
+         'images/marker.png').then((onValue) {
+            pinLocationIcon = onValue;
+         });
     lat = 100.0;
     long = 50.0;
     vendorMarker = new Marker(markerId: markerId);
@@ -56,8 +63,10 @@ class MapPageState extends State<MapPage> {
         allMarkers.add(Marker(
             markerId: MarkerId('Vendor1'),
             draggable: false,
+            icon: pinLocationIcon,
             onTap: () {
               print('Marker Tapped');
+              index=0;
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => display_items()));
             },
@@ -66,8 +75,10 @@ class MapPageState extends State<MapPage> {
         allMarkers.add(Marker(
             markerId: MarkerId('Vendor2'),
             draggable: false,
+            icon: pinLocationIcon,
             onTap: () {
               print('Marker Tapped');
+              index=1;
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => display_items()));
             },
@@ -75,9 +86,11 @@ class MapPageState extends State<MapPage> {
                 long + (random.nextDouble() - 0.5) / 100)));
         allMarkers.add(Marker(
             markerId: MarkerId('Vendor3'),
+            icon: pinLocationIcon,
             draggable: false,
             onTap: () {
               print('Marker Tapped');
+              index=2;
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => display_items()));
             },
@@ -85,9 +98,11 @@ class MapPageState extends State<MapPage> {
                 long + (random.nextDouble() - 0.5) / 100)));
         allMarkers.add(Marker(
             markerId: MarkerId('Vendor4'),
+            icon: pinLocationIcon,
             draggable: false,
             onTap: () {
               print('Marker Tapped');
+              index=3;
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => display_items()));
             },
@@ -96,9 +111,11 @@ class MapPageState extends State<MapPage> {
 
         allMarkers.add(Marker(
             markerId: MarkerId('Vendor5'),
+            icon: pinLocationIcon,
             draggable: false,
             onTap: () {
               print('Marker Tapped');
+              index=4;
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => display_items()));
             },
@@ -201,7 +218,6 @@ class display_items extends StatefulWidget {
 class _display_itemsState extends State<display_items> {
   // int i=0;
   TextEditingController _controller = new TextEditingController();
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -219,7 +235,8 @@ class _display_itemsState extends State<display_items> {
           builder: (context, snapshot) {
             if (!snapshot.hasData) return Text('Loading..');
             return ListView.builder(
-              itemCount: snapshot.data.documents.length,
+              //itemCount: snapshot.data.documents.length,
+              itemCount: snapshot.data.documents[index].data.length,
               itemBuilder: (BuildContext context, int i) {
                 return Card(
                     child: Column(
@@ -227,8 +244,8 @@ class _display_itemsState extends State<display_items> {
                   children: <Widget>[
                     ListTile(
                       leading: Icon(Icons.album),
-                      title: Text(snapshot.data.documents[i]['Product']),
-                      subtitle: Text(snapshot.data.documents[i]['Product_cost']
+                      title: Text(snapshot.data.documents[index]['Product${i+1}']['name']),
+                      subtitle: Text("Rs. "+snapshot.data.documents[index]['Product${i+1}']['cost']
                           .toString()),
                     ),
                     TextField(
