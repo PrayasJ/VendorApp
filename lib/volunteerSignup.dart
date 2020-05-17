@@ -37,7 +37,7 @@ class VolunteerSignupState extends State<VolunteerSignup> {
   }
 
   final FirebaseStorage _storage =
-      FirebaseStorage(storageBucket: "gs://swaraksha-3abd1.appspot.com");
+      FirebaseStorage(storageBucket: "gs://vendor-1d012.appspot.com");
 
   StorageUploadTask _uploadTask;
   String bucketFilePath;

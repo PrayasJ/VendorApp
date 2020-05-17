@@ -7,9 +7,10 @@ class CartItemModel{
 }
 
 class VendorItemModel{
-  String id;
+  String vendorId;
+  String productId;
   String name;
   int price;
 
-  VendorItemModel({this.id, this.name, this.price});
+  VendorItemModel({this.vendorId, this.productId, this.name, this.price});
 }

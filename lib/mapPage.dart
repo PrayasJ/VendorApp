@@ -18,12 +18,14 @@ class MapPage extends StatefulWidget {
   MapPageState createState() => MapPageState();
 }
 
+int index;
+
 class MapPageState extends State<MapPage> {
   double lat;
   double long;
   GoogleMapController mapController;
+  BitmapDescriptor pinLocationIcon;
   bool mapCreated = false;
-
   DatabaseClass dataBase = new DatabaseClass();
   String vendorData;
 
@@ -47,6 +49,11 @@ class MapPageState extends State<MapPage> {
   @override
   void initState() {
     //vendorMarkerSet.add(vendorMarker);
+    BitmapDescriptor.fromAssetImage(
+            ImageConfiguration(devicePixelRatio: 2.5), 'images/marker.png')
+        .then((onValue) {
+      pinLocationIcon = onValue;
+    });
     lat = 100.0;
     long = 50.0;
     vendorMarker = new Marker(markerId: markerId);
@@ -61,8 +68,10 @@ class MapPageState extends State<MapPage> {
         allMarkers.add(Marker(
             markerId: MarkerId('Vendor1'),
             draggable: false,
+            icon: pinLocationIcon,
             onTap: () {
               print('Marker Tapped');
+              index = 0;
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => display_items()));
             },
@@ -71,8 +80,10 @@ class MapPageState extends State<MapPage> {
         allMarkers.add(Marker(
             markerId: MarkerId('Vendor2'),
             draggable: false,
+            icon: pinLocationIcon,
             onTap: () {
               print('Marker Tapped');
+              index = 1;
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => display_items()));
             },
@@ -80,9 +91,11 @@ class MapPageState extends State<MapPage> {
                 long + (random.nextDouble() - 0.5) / 100)));
         allMarkers.add(Marker(
             markerId: MarkerId('Vendor3'),
+            icon: pinLocationIcon,
             draggable: false,
             onTap: () {
               print('Marker Tapped');
+              index = 2;
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => display_items()));
             },
@@ -90,9 +103,11 @@ class MapPageState extends State<MapPage> {
                 long + (random.nextDouble() - 0.5) / 100)));
         allMarkers.add(Marker(
             markerId: MarkerId('Vendor4'),
+            icon: pinLocationIcon,
             draggable: false,
             onTap: () {
               print('Marker Tapped');
+              index = 3;
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => display_items()));
             },
@@ -101,9 +116,11 @@ class MapPageState extends State<MapPage> {
 
         allMarkers.add(Marker(
             markerId: MarkerId('Vendor5'),
+            icon: pinLocationIcon,
             draggable: false,
             onTap: () {
               print('Marker Tapped');
+              index = 4;
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => display_items()));
             },
@@ -210,8 +227,9 @@ class _display_itemsState extends State<display_items> {
   @override
   void initState() {
     FirebaseAuth.instance.currentUser().then((FirebaseUser user) {
-      CartHelper.instance.initializeCart(user.uid).whenComplete(() {
+      CartHelper.instance.initializeCart(user.uid).then((ready) {
         id = user.uid;
+        print('Initialise Iddddddddddddddddddddddddddddddddddddddd');
         setState(() {});
       });
     });
@@ -221,81 +239,81 @@ class _display_itemsState extends State<display_items> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('List'),
-        backgroundColor: Colors.red,
-      ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.red,
-        child: CartIcon(),
-        onPressed: () {
-          if (id != null)
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => CartDisplay(
-                  uid: id,
+        appBar: AppBar(
+          title: Text('List'),
+          backgroundColor: Colors.red,
+        ),
+        floatingActionButton: FloatingActionButton(
+          backgroundColor: Colors.red,
+          child: CartIcon(),
+          onPressed: () {
+            if (CartHelper.instance.isInitialised())
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => CartDisplay(
+                    uid: id,
+                  ),
                 ),
-              ),
-            );
-        },
-      ),
-      body: id == null
-          ? Center(child: CircularProgressIndicator())
-          : StreamBuilder<DocumentSnapshot>(
-              stream: Firestore.instance
-                  .collection('Vendors')
-                  .document('dXsb8OZVRbdRqoMIg1Ku')
-                  .snapshots(),
-              builder: (context, snapshot) {
-                if (!snapshot.hasData) return Text('Loading..');
-                List<Widget> _items = [];
-                snapshot.data.data.forEach((key, value) {
-                  TextEditingController _controller =
-                      new TextEditingController();
-                  _items.add(Card(
-                      child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      ListTile(
-                        leading: Icon(Icons.album),
-                        title: Text(value['name']),
-                        subtitle: Text(
-                          value['cost'].toString(),
-                        ),
-                        trailing: IconButton(
-                          icon: Icon(Icons.add_shopping_cart),
-                          color: Colors.red,
-                          onPressed: () {
-                            CartItemModel item = CartItemModel(
-                              vendorId: snapshot.data.documentID,
-                              productId: key,
-                              quantity: int.parse(_controller.text),
-                            );
-                            CartHelper.instance.addToCart(item);
-                          },
-                        ),
-                      ),
-                      TextField(
-                        keyboardType: TextInputType.number,
-                        controller: _controller,
-                        decoration: InputDecoration(
-                          hintText: "Enter Quantity",
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5.0),
-                            borderSide: BorderSide(
-                              color: Colors.red,
-                              style: BorderStyle.solid,
+              );
+          },
+        ),
+        body: id == null
+            ? Center(child: CircularProgressIndicator())
+            : StreamBuilder<QuerySnapshot>(
+                stream: Firestore.instance.collection('Vendors').snapshots(),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) return Text('Loading..');
+                  return ListView.builder(
+                      //itemCount: snapshot.data.documents.length,
+                      itemCount: snapshot.data.documents[index].data.length,
+                      itemBuilder: (BuildContext context, int i) {
+                        TextEditingController _controller =
+                            TextEditingController();
+                        return Card(
+                            child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            ListTile(
+                              leading: Icon(Icons.album),
+                              title: Text(snapshot.data.documents[index]
+                                  ['Product${i + 1}']['name']),
+                              subtitle: Text("Rs. " +
+                                  snapshot
+                                      .data
+                                      .documents[index]['Product${i + 1}']
+                                          ['cost']
+                                      .toString()),
+                              trailing: IconButton(
+                                icon: Icon(Icons.add_shopping_cart),
+                                color: Colors.red,
+                                onPressed: () {
+                                  CartItemModel item = CartItemModel(
+                                    vendorId: snapshot
+                                        .data.documents[index].documentID,
+                                    productId: 'Product${i + 1}',
+                                    quantity: int.parse(_controller.text),
+                                  );
+                                  CartHelper.instance.addToCart(item);
+                                },
+                              ),
                             ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  )));
-                });
-                return ListView(
-                  children: _items,
-                );
-              }),
-    );
+                            TextField(
+                                keyboardType: TextInputType.number,
+                                controller: _controller,
+                                decoration: InputDecoration(
+                                  hintText: "Enter Quantity",
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(5.0),
+                                    borderSide: BorderSide(
+                                      color: Colors.red,
+                                      style: BorderStyle.solid,
+                                    ),
+                                  ),
+                                )),
+                          ],
+                        ));
+                      });
+                },
+              ));
   }
 }

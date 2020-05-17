@@ -18,16 +18,22 @@ class _CartDisplayState extends State<CartDisplay> {
 
   @override
   void initState() {
+    _error = false;
+    loadItems();
+    super.initState();
+  }
+
+  Future<void> loadItems() async {
     List<VendorItemModel> items = [];
     List<int> quantities = [];
-    _error = false;
     Future.forEach(CartHelper.instance.cartItems,
         (CartItemModel cartItem) async {
       DocumentReference docRef =
           Firestore.instance.collection('Vendors').document(cartItem.vendorId);
       DocumentSnapshot ds = await docRef.get();
       VendorItemModel vItem = VendorItemModel(
-        id: ds.documentID,
+        vendorId: ds.documentID,
+        productId: cartItem.productId,
         name: ds.data[cartItem.productId]['name'],
         price: ds.data[cartItem.productId]['cost'],
       );
@@ -41,7 +47,6 @@ class _CartDisplayState extends State<CartDisplay> {
       _error = true;
       setState(() {});
     });
-    super.initState();
   }
 
   Widget getMainBody() {
@@ -55,7 +60,36 @@ class _CartDisplayState extends State<CartDisplay> {
             title: Text(_items[i].name ?? ''),
             subtitle: Text("Price : $p\nQuantity : $q"),
             isThreeLine: true,
-            trailing: Text("Rs.${p * q}"),
+            trailing: IconButton(
+              icon: Icon(Icons.remove_shopping_cart),
+              color: Colors.red,
+              onPressed: () async {
+                CartItemModel _cartItem = CartItemModel(
+                    vendorId: _items[i].vendorId,
+                    productId: _items[i].productId,
+                    quantity: _quantities[i]);
+                showDialog(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (context) {
+                    return WillPopScope(
+                      onWillPop: () async => false,
+                      child: Center(child: CircularProgressIndicator()),
+                    );
+                  },
+                );
+                try {
+                  await CartHelper.instance.removeFromCart(_cartItem);
+                } catch (e) {
+                  print('Failed to remove');
+                }
+                Navigator.of(context).pop();
+                setState(() {
+                  _items.removeAt(i);
+                  _quantities.removeAt(i);
+                });
+              },
+            ),
           );
         },
       );

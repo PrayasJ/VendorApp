@@ -9,11 +9,11 @@ class CartHelper {
   CartBloc _cartBloc = CartBloc();
   String _uid;
 
-  Future<void> initializeCart(String uid) async {
+  Future<bool> initializeCart(String uid) async {
     _uid = uid;
     if (_cartItems == null) {
       List<CartItemModel> cartItems = [];
-      Firestore.instance
+      return Firestore.instance
           .collection('Cart')
           .document(uid)
           .get()
@@ -23,10 +23,13 @@ class CartHelper {
           cartItems.add(CartItemModel(vendorId: ids[0], productId: ids[1], quantity: value));
         });
         _cartItems = cartItems;
+        print("Loadedddddddddddddddddddddddddddddddddddddddddddddddddd");
         _cartBloc.setCart(cartItems.length);
+        return true;
       });
     } else {
       print('CART HAS ALREADY BEEN INITIALIZED.');
+      return true;
     }
   }
   
@@ -34,6 +37,10 @@ class CartHelper {
   List<CartItemModel> get cartItems {
     assert(_cartItems != null);
     return _cartItems;
+  }
+
+  bool isInitialised(){
+    return !(_cartItems == null);
   }
 
   Future<void> addToCart(CartItemModel item) {
