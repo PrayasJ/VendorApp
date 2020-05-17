@@ -15,8 +15,8 @@ class _CartDisplayState extends State<CartDisplay> {
   List<VendorItemModel> _items;
   List<int> _quantities;
   bool _error = false;
-  int _selectedIndex=0;
-
+  int _selectedIndex = 0;
+  int total = 0;
 
   @override
   void initState() {
@@ -44,11 +44,19 @@ class _CartDisplayState extends State<CartDisplay> {
     }).whenComplete(() {
       _items = items;
       _quantities = quantities;
+      calculateTotal();
       setState(() {});
     }).catchError((e) {
       _error = true;
       setState(() {});
     });
+  }
+
+  void calculateTotal() {
+    total = 0;
+    for (int i = 0; i < _items.length; i++) {
+      total += _items[i].price * _quantities[i];
+    }
   }
 
   Widget getMainBody() {
@@ -86,9 +94,11 @@ class _CartDisplayState extends State<CartDisplay> {
                   print('Failed to remove');
                 }
                 Navigator.of(context).pop();
+                _items.removeAt(i);
+                _quantities.removeAt(i);
+                calculateTotal();
                 setState(() {
-                  _items.removeAt(i);
-                  _quantities.removeAt(i);
+                  
                 });
               },
             ),
@@ -104,47 +114,53 @@ class _CartDisplayState extends State<CartDisplay> {
     return Scaffold(
       bottomNavigationBar: BottomAppBar(
           child: Container(
-            height: 60,
-            child: Row(
-                mainAxisSize: MainAxisSize.max,
-                children: <Widget>[
-                  Expanded(
-                    child: Container(
-                      color: Colors.blueGrey[300],
-                      child: FlatButton(
-                        padding: EdgeInsets.all(10.0),
-                        onPressed: () {},
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            Center(child: Text('VIEW DETAILED BILL',style: TextStyle(fontSize: 20,color: Colors.white),))
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  Container(color: Colors.black, width: 2,),
-                  Expanded(
-                    child: Container(
-                      color: Colors.green,
-                      child: FlatButton(
-                        padding: EdgeInsets.all(0.0),
-                        onPressed: () {},
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            Text('PROCEED TO PAY',style: TextStyle(fontSize: 20,color: Colors.white),)
-                          ],
-                        ),
-                      ),
-                    ),
-                  )
-                ]
+        height: 60,
+        child: Row(mainAxisSize: MainAxisSize.max, children: <Widget>[
+          Expanded(
+            child: Container(
+              color: Colors.blueGrey[300],
+              child: FlatButton(
+                padding: EdgeInsets.all(10.0),
+                onPressed: () {},
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Center(
+                        child: Text(
+                      'Total: Rs. $total',
+                      style: TextStyle(fontSize: 20, color: Colors.white),
+                    ))
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Container(
+            color: Colors.black,
+            width: 2,
+          ),
+          Expanded(
+            child: Container(
+              color: Colors.green,
+              child: FlatButton(
+                padding: EdgeInsets.all(0.0),
+                onPressed: () {},
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Text(
+                      'PROCEED TO PAY',
+                      style: TextStyle(fontSize: 20, color: Colors.white),
+                    )
+                  ],
+                ),
+              ),
             ),
           )
-      ),
+        ]),
+      )),
       appBar: AppBar(
         title: Text('Cart'),
         backgroundColor: Colors.red,
