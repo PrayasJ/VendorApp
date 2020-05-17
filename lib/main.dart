@@ -68,6 +68,7 @@ class OpeningScreenState extends State<OpeningScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFF8E4252),
       body: Center(
         child: Container(
           height: MediaQuery.of(context).size.height/2,

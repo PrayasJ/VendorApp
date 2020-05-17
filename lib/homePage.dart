@@ -5,7 +5,6 @@ import 'package:VendorApp/login.dart';
 
 import 'profilePage.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/animation.dart';
 import 'package:geolocator/geolocator.dart';
 import 'authentication.dart';
 import 'main.dart';
@@ -184,26 +183,44 @@ Widget transition(double val){
             ))
         : Scaffold(
             body: Container(
-              child: Center(
-                child: Column(
-                  children: <Widget>[
-                    Text(
-                        "You cannot use the app without giving permission.(Choose 'Allow all the time')"),
-                    RaisedButton(
-                      child: Text("OK"),
-                      onPressed: () {
-                        locationPermission().then((_) async {
-                          setState(() {});
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Spacer(flex: 2,),
+                  Container(child: Image.asset("images/splash.png")),
+                  Spacer(flex: 2,),
+                  Container(
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 28),
+                        child: Text(
+                            "You cannot use the app without giving permission.\n\n(Click Ok to 'Allow' this time)",style:TextStyle(
+                          fontSize: 17,fontWeight: FontWeight.bold,
+                        ) ,textAlign: TextAlign.center,),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    child: Padding(
+                      padding: const EdgeInsets.all(28.0),
+                      child: RaisedButton(
+                        child: Text("OK",style: TextStyle(fontSize: 23),),
+                        onPressed: () {
+                          locationPermission().then((_) async {
+                            setState(() {});
 
-                          if (permissionStatus == GeolocationStatus.granted) {
-                            alwaysPositionStream = await streamPositon("Users");
-                          }
-                        });
-                      },
-                    )
-                  ],
-                  mainAxisAlignment: MainAxisAlignment.center,
-                ),
+                            if (permissionStatus == GeolocationStatus.granted) {
+                              alwaysPositionStream = await streamPositon("Users");
+                            }
+                          });
+                        },
+                      ),
+                    ),
+                  ),
+                  Spacer(flex: 14,),
+
+                ],
+                mainAxisAlignment: MainAxisAlignment.start,
               ),
             ),
           );
