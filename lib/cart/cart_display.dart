@@ -2,6 +2,7 @@ import 'package:VendorApp/cart/cart_helper.dart';
 import 'package:VendorApp/cart/item_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:VendorApp/razorpay/payment.dart';
 
 class CartDisplay extends StatefulWidget {
   final String uid;
@@ -98,7 +99,6 @@ class _CartDisplayState extends State<CartDisplay> {
                 _quantities.removeAt(i);
                 calculateTotal();
                 setState(() {
-                  
                 });
               },
             ),
@@ -145,7 +145,9 @@ class _CartDisplayState extends State<CartDisplay> {
               color: Colors.green,
               child: FlatButton(
                 padding: EdgeInsets.all(0.0),
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(context,MaterialPageRoute(builder: (context)=>Payment(total*100.0)));
+                },
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,

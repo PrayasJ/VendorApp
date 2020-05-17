@@ -15,6 +15,7 @@ import io.flutter.plugins.imagepicker.ImagePickerPlugin;
 import com.baseflow.location_permissions.LocationPermissionsPlugin;
 import io.flutter.plugins.pathprovider.PathProviderPlugin;
 import com.julienvignali.phone_number.PhoneNumberPlugin;
+import com.razorpay.razorpay_flutter.RazorpayFlutterPlugin;
 import io.flutter.plugins.sharedpreferences.SharedPreferencesPlugin;
 
 /**
@@ -39,6 +40,7 @@ public final class GeneratedPluginRegistrant {
     LocationPermissionsPlugin.registerWith(registry.registrarFor("com.baseflow.location_permissions.LocationPermissionsPlugin"));
     PathProviderPlugin.registerWith(registry.registrarFor("io.flutter.plugins.pathprovider.PathProviderPlugin"));
     PhoneNumberPlugin.registerWith(registry.registrarFor("com.julienvignali.phone_number.PhoneNumberPlugin"));
+    RazorpayFlutterPlugin.registerWith(registry.registrarFor("com.razorpay.razorpay_flutter.RazorpayFlutterPlugin"));
     SharedPreferencesPlugin.registerWith(registry.registrarFor("io.flutter.plugins.sharedpreferences.SharedPreferencesPlugin"));
   }
 

@@ -9,13 +9,16 @@ import 'dart:developer';
 
 class Payment extends StatefulWidget {
   @override
-  _PaymentState createState() => _PaymentState();
+  double total;
+  Payment(this.total);
+  _PaymentState createState() => _PaymentState(this.total);
 }
 
 class _PaymentState extends State<Payment> {
   Razorpay _razorpay = Razorpay();
 //  OrderId _orderId;
-  double cartTotal = 1000;
+  double cartTotal;
+  _PaymentState(this.cartTotal);
   var options;
   String keyId = 'rzp_test_UBTFXZ8gM6iEeZ';
   String keyValue = 'Vpb6hVZtCBcrLpsY0UD26B4g';
