@@ -48,6 +48,7 @@ android {
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
     }
 
     buildTypes {
@@ -72,4 +73,5 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth:19.2.0'
     //compile 'com.google.firebase:firebase-core:16.0.0'
     implementation 'com.google.firebase:firebase-database:19.2.1'
+    implementation 'androidx.multidex:multidex:2.0.1'
 }
