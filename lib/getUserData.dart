@@ -5,7 +5,7 @@ import 'dart:convert';
 
 class GetUserData {
   FirebaseStorage store =
-      FirebaseStorage(storageBucket: "gs://swaraksha-3abd1.appspot.com");
+      FirebaseStorage(storageBucket: "gs://vendor-1d012.appspot.com");
   FirebaseUser currentUser;
 
   Response response;

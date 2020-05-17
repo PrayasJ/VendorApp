@@ -58,6 +58,63 @@ class ProfilePageState extends State<ProfilePage> {
               ),
             ),
             SizedBox(height: 30.0),
+            Text(
+              'MOBILE NUMBER',
+              style: TextStyle(
+                color: Colors.grey,
+                letterSpacing: 2.0
+              ),
+            ),
+            SizedBox(height: 10.0),
+            Text(
+              widget.mobileNo,
+              style: TextStyle(
+                  color: Colors.amberAccent[200],
+                  letterSpacing: 2.0,
+                  fontSize: 20.0,
+                fontWeight: FontWeight.bold
+
+              ),
+            ),
+            SizedBox(height: 30.0),
+            Text(
+              'Gender',
+              style: TextStyle(
+                color: Colors.grey,
+                letterSpacing: 2.0
+              ),
+            ),
+            SizedBox(height: 10.0),
+            Text(
+              widget.gender,
+              style: TextStyle(
+                  color: Colors.amberAccent[200],
+                  letterSpacing: 2.0,
+                  fontSize: 20.0,
+                fontWeight: FontWeight.bold
+
+              ),
+            ),
+            SizedBox(height: 30.0),
+            Text(
+              'ADDRESS',
+              style: TextStyle(
+                color: Colors.grey,
+                letterSpacing: 2.0
+              ),
+            ),
+            SizedBox(height: 10.0),
+            Text(
+              widget.address,
+              style: TextStyle(
+                  color: Colors.amberAccent[200],
+                  letterSpacing: 2.0,
+                  fontSize: 20.0,
+                fontWeight: FontWeight.bold
+
+              ),
+            ),
+            SizedBox(height: 30.0),
             Row(
               children: <Widget>[
                 Icon(
