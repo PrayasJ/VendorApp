@@ -36,12 +36,12 @@ class _CartIconState extends State<CartIcon> {
                           shape: BoxShape.circle,
                           color: Colors.white,
                           border: Border.all(
-                              color: Theme.of(context).primaryColor, width: 1),
+                              color: Colors.red, width: 1),
                         ),
                         child: Text(
                           "${snapshot.data}",
                           style: TextStyle(
-                            color: Theme.of(context).primaryColor,
+                            color: Colors.red,
                             fontSize: 10,
                             fontWeight: FontWeight.w900,
                           ),

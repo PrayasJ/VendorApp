@@ -1,12 +1,14 @@
-import 'package:flutter/material.dart';
-import 'authentication.dart';
-import 'homePage.dart';
-import 'main.dart';
-import 'volunteerSignup.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'modalWidget.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+
+import 'authentication.dart';
 import 'codeInput.dart';
 import 'databaseClass.dart';
+import 'homePage.dart';
+import 'main.dart';
+import 'modalWidget.dart';
+import 'volunteerSignup.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPageState createState() => LoginPageState();
@@ -39,114 +41,124 @@ class LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Stack(children: <Widget>[
-      ListView(children: <Widget>[
-        Center(
-          child:Container(
-            color: Colors.white,
+        body: Center(
+      child: Stack(children: <Widget>[
+        ListView(children: <Widget>[
+          Hero(
+            tag: "logo",
+            child: Container(
+              height: 350,
+              width: 600,
+              child:Image.asset("images/splash.png") ,
+            ),
           ),
-        ),
-        Form(
-            key: formKey,
-            child: Column(children: <Widget>[
-              Container(
-                child: TextFormField(
-                  decoration: InputDecoration(labelText: emailOrNum),
-                  onSaved: (input) {
-                    if (phoneAuth) {
-                      mobNum = input;
-                    } else if (!phoneAuth) {
-                      _email = input;
-                    }
-                  },
-                ),
-                width: MediaQuery.of(context).size.width * ratio,
-              ),
-              SizedBox(
-                height: gap,
-              ),
-              !phoneAuth
-                  ? Container(
-                      child: TextFormField(
-                        decoration: InputDecoration(labelText: "Password"),
-                        onSaved: (input) => _password = input,
-                        obscureText: true,
+          Center(
+            child: Form(
+                key: formKey,
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Container(
+                        child: TextFormField(
+                          decoration: InputDecoration(labelText: emailOrNum),
+                          onSaved: (input) {
+                            if (phoneAuth) {
+                              mobNum = input;
+                            } else if (!phoneAuth) {
+                              _email = input;
+                            }
+                          },
+                        ),
+                        width: MediaQuery.of(context).size.width * ratio,
                       ),
-                      width: MediaQuery.of(context).size.width * ratio,
-                    )
-                  : SizedBox(
-                      height: 0,
-                      width: 0,
-                    ),
-              SizedBox(
-                height: gap,
-              ),
-              ButtonTheme(
-                child: RaisedButton(
-                  child: Text(
-                    "LOG IN",
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  onPressed: () {
-                    if (!phoneAuth) {
-                      saveAndLoginEmail(context);
-                    } else {
-                      saveAndLoginMobile();
-                    }
-                  },
-                ),
-                minWidth: MediaQuery.of(context).size.width * 0.6,
-                height: MediaQuery.of(context).size.width * 0.1,
-              ),
-              FlatButton(
-                child: Text(logInChoice),
-                onPressed: () {
-                  setState(() {
-                    phoneAuth = !phoneAuth;
-                    if (phoneAuth == true) {
-                      logInChoice = "Log In using Email-ID";
-                      emailOrNum = "Mobile Number";
-                    } else {
-                      logInChoice = "Log In using Mobile Number";
-                      emailOrNum = "Email-ID";
-                    }
-                  });
-                },
-              ),
-              FlatButton(
-                child: Text("Don't have an Account? Sign Up!"),
-                onPressed: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (BuildContext c) {
-                    return VolunteerSignup();
-                  }));
-                },
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Align(
-                child: Text(
-                  errorMsg,
-                  style: TextStyle(
-                    color: Colors.red,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                alignment: Alignment.center,
-              ),
-            ]))
+                      SizedBox(
+                        height: gap,
+                      ),
+                      !phoneAuth
+                          ? Container(
+                              child: TextFormField(
+                                decoration:
+                                    InputDecoration(labelText: "Password"),
+                                onSaved: (input) => _password = input,
+                                obscureText: true,
+                              ),
+                              width: MediaQuery.of(context).size.width * ratio,
+                            )
+                          : SizedBox(
+                              height: 0,
+                              width: 0,
+                            ),
+                      SizedBox(
+                        height: gap,
+                      ),
+                      ButtonTheme(
+                        child: RaisedButton(
+                          child: Text(
+                            "LOG IN",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          onPressed: () {
+                            if (!phoneAuth) {
+                              saveAndLoginEmail(context);
+                            } else {
+                              saveAndLoginMobile();
+                            }
+                          },
+                        ),
+                        minWidth: MediaQuery.of(context).size.width * 0.6,
+                        height: MediaQuery.of(context).size.width * 0.1,
+                      ),
+                      FlatButton(
+                        child: Text(logInChoice),
+                        onPressed: () {
+                          setState(() {
+                            phoneAuth = !phoneAuth;
+                            if (phoneAuth == true) {
+                              logInChoice = "Log In using Email-ID";
+                              emailOrNum = "Mobile Number";
+                            } else {
+                              logInChoice = "Log In using Mobile Number";
+                              emailOrNum = "Email-ID";
+                            }
+                          });
+                        },
+                      ),
+                      FlatButton(
+                        child: Text("Don't have an Account? Sign Up!"),
+                        onPressed: () {
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (BuildContext c) {
+                            return VolunteerSignup();
+                          }));
+                        },
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Align(
+                        child: Text(
+                          errorMsg,
+                          style: TextStyle(
+                            color: Colors.red,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        alignment: Alignment.center,
+                      ),
+                    ])),
+          )
+        ]),
+        isProcessing
+            ? Container(
+                child: Center(child: CircularProgressIndicator()),
+                decoration: BoxDecoration(color: Colors.black.withOpacity(0.5)),
+              )
+            : SizedBox(
+                height: 0,
+                width: 0,
+              )
       ]),
-      isProcessing
-          ? Container(
-              child: Center(child: CircularProgressIndicator()),
-              decoration: BoxDecoration(color: Colors.black.withOpacity(0.5)),
-            )
-          : SizedBox(
-              height: 0,
-              width: 0,
-            )
-    ]));
+    ));
   }
 
   void saveAndLoginEmail(BuildContext context) {

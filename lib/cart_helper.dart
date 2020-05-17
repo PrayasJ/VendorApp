@@ -1,5 +1,5 @@
 import 'package:VendorApp/cart_bloc.dart';
-import 'package:VendorApp/cart_item_model.dart';
+import 'package:VendorApp/item_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class CartHelper {
@@ -7,38 +7,52 @@ class CartHelper {
   static final CartHelper instance = CartHelper._();
   List<CartItemModel> _cartItems;
   CartBloc _cartBloc = CartBloc();
+  String _uid;
 
-  Future<void> initializeCart() async {
+  Future<bool> initializeCart(String uid) async {
+    _uid = uid;
     if (_cartItems == null) {
       List<CartItemModel> cartItems = [];
-      //TODO: Fetch cart data from firestore and assign it ro _cartItems
-      Firestore.instance
-          .collection('Vendors')
-          .getDocuments()
-          .then((QuerySnapshot qs) {
-        qs.documents.forEach((snapshot) {
-          cartItems.add(CartItemModel.fromMap(snapshot.documentID, snapshot.data));
+      return Firestore.instance
+          .collection('Cart')
+          .document(uid)
+          .get()
+          .then((DocumentSnapshot ds) {
+        ds.data?.forEach((key, value) {
+          List<String> ids = key.split('###');
+          cartItems.add(CartItemModel(vendorId: ids[0], productId: ids[1], quantity: value));
         });
         _cartItems = cartItems;
+        print("Loadedddddddddddddddddddddddddddddddddddddddddddddddddd");
         _cartBloc.setCart(cartItems.length);
+        return true;
       });
     } else {
       print('CART HAS ALREADY BEEN INITIALIZED.');
+      return true;
     }
   }
+  
 
   List<CartItemModel> get cartItems {
     assert(_cartItems != null);
     return _cartItems;
   }
 
+  bool isInitialised(){
+    return !(_cartItems == null);
+  }
+
   Future<void> addToCart(CartItemModel item) {
+    assert(_cartItems != null);
     _cartBloc.addToCart();
-    //TODO: Upload data to firestore and add item to _cartItem
-    return Firestore.instance.collection('Vendors').add(item.toMap()).then((DocumentReference docRef) {
+    return Firestore.instance
+        .collection('Cart')
+        .document(_uid)
+        .setData({'${item.vendorId}###${item.productId}': item.quantity}, merge: true).then((_) async {
       print('Added to cart');
-      item.id = docRef.documentID;
-      _cartItems.add(item);
+      _cartItems = null;
+      await initializeCart(_uid);
     }).catchError((e) {
       print("Failed to add to cart!");
       _cartBloc.removeFromCart();
@@ -46,11 +60,15 @@ class CartHelper {
   }
 
   Future<void> removeFromCart(CartItemModel item) {
+    assert(_cartItems != null);
     _cartBloc.removeFromCart();
-    //TODO: Delete data from firestore and remove item from _cartItem
-    return Firestore.instance.collection('Vendors').document(item.id).delete().then((_) {
+    return Firestore.instance
+        .collection('Cart')
+        .document(_uid)
+        .updateData({'${item.vendorId}###${item.productId}': FieldValue.delete()}).then((_) async {
       print('Removed to cart');
-      _cartItems.remove(item);
+      _cartItems = null;
+      await initializeCart(_uid);
     }).catchError((e) {
       print("Failed to remove from cart!");
       _cartBloc.addToCart();

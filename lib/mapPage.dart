@@ -1,6 +1,11 @@
 import 'dart:async';
 import 'dart:core';
 import 'dart:math';
+import 'package:VendorApp/cart_display.dart';
+import 'package:VendorApp/cart_helper.dart';
+import 'package:VendorApp/cart_icon.dart';
+import 'package:VendorApp/item_model.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -13,7 +18,7 @@ class MapPage extends StatefulWidget {
   MapPageState createState() => MapPageState();
 }
 
- int index;
+int index;
 
 class MapPageState extends State<MapPage> {
   double lat;
@@ -45,10 +50,10 @@ class MapPageState extends State<MapPage> {
   void initState() {
     //vendorMarkerSet.add(vendorMarker);
     BitmapDescriptor.fromAssetImage(
-         ImageConfiguration(devicePixelRatio: 2.5),
-         'images/marker.png').then((onValue) {
-            pinLocationIcon = onValue;
-         });
+            ImageConfiguration(devicePixelRatio: 2.5), 'images/marker.png')
+        .then((onValue) {
+      pinLocationIcon = onValue;
+    });
     lat = 100.0;
     long = 50.0;
     vendorMarker = new Marker(markerId: markerId);
@@ -66,7 +71,7 @@ class MapPageState extends State<MapPage> {
             icon: pinLocationIcon,
             onTap: () {
               print('Marker Tapped');
-              index=0;
+              index = 0;
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => display_items()));
             },
@@ -78,7 +83,7 @@ class MapPageState extends State<MapPage> {
             icon: pinLocationIcon,
             onTap: () {
               print('Marker Tapped');
-              index=1;
+              index = 1;
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => display_items()));
             },
@@ -90,7 +95,7 @@ class MapPageState extends State<MapPage> {
             draggable: false,
             onTap: () {
               print('Marker Tapped');
-              index=2;
+              index = 2;
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => display_items()));
             },
@@ -102,7 +107,7 @@ class MapPageState extends State<MapPage> {
             draggable: false,
             onTap: () {
               print('Marker Tapped');
-              index=3;
+              index = 3;
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => display_items()));
             },
@@ -115,7 +120,7 @@ class MapPageState extends State<MapPage> {
             draggable: false,
             onTap: () {
               print('Marker Tapped');
-              index=4;
+              index = 4;
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => display_items()));
             },
@@ -217,56 +222,98 @@ class display_items extends StatefulWidget {
 
 class _display_itemsState extends State<display_items> {
   // int i=0;
-  TextEditingController _controller = new TextEditingController();
+  String id;
+
+  @override
+  void initState() {
+    FirebaseAuth.instance.currentUser().then((FirebaseUser user) {
+      CartHelper.instance.initializeCart(user.uid).then((ready) {
+        id = user.uid;
+        print('Initialise Iddddddddddddddddddddddddddddddddddddddd');
+        setState(() {});
+      });
+    });
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('List'),
-        backgroundColor: Colors.red,
-      ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.red,
-        child: Icon(Icons.shopping_cart),
-        onPressed: () {},
-      ),
-      body: StreamBuilder(
-          stream: Firestore.instance.collection('Vendors').snapshots(),
-          builder: (context, snapshot) {
-            if (!snapshot.hasData) return Text('Loading..');
-            return ListView.builder(
-              //itemCount: snapshot.data.documents.length,
-              itemCount: snapshot.data.documents[index].data.length,
-              itemBuilder: (BuildContext context, int i) {
-                return Card(
-                    child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    ListTile(
-                      leading: Icon(Icons.album),
-                      title: Text(snapshot.data.documents[index]['Product${i+1}']['name']),
-                      subtitle: Text("Rs. "+snapshot.data.documents[index]['Product${i+1}']['cost']
-                          .toString()),
-                    ),
-                    TextField(
-                      keyboardType: TextInputType.number,
-                      controller: _controller,
-                      decoration: InputDecoration(
-                        hintText: "Enter Quantity",
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5.0),
-                          borderSide: BorderSide(
-                            color: Colors.red,
-                            style: BorderStyle.solid,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ));
-              },
-            );
-          }),
-    );
+        appBar: AppBar(
+          title: Text('List'),
+          backgroundColor: Colors.red,
+        ),
+        floatingActionButton: FloatingActionButton(
+          backgroundColor: Colors.red,
+          child: CartIcon(),
+          onPressed: () {
+            if (CartHelper.instance.isInitialised())
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => CartDisplay(
+                    uid: id,
+                  ),
+                ),
+              );
+          },
+        ),
+        body: id == null
+            ? Center(child: CircularProgressIndicator())
+            : StreamBuilder<QuerySnapshot>(
+                stream: Firestore.instance.collection('Vendors').snapshots(),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) return Text('Loading..');
+                  return ListView.builder(
+                      //itemCount: snapshot.data.documents.length,
+                      itemCount: snapshot.data.documents[index].data.length,
+                      itemBuilder: (BuildContext context, int i) {
+                        TextEditingController _controller =
+                            TextEditingController();
+                        return Card(
+                            child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            ListTile(
+                              leading: Icon(Icons.album),
+                              title: Text(snapshot.data.documents[index]
+                                  ['Product${i + 1}']['name']),
+                              subtitle: Text("Rs. " +
+                                  snapshot
+                                      .data
+                                      .documents[index]['Product${i + 1}']
+                                          ['cost']
+                                      .toString()),
+                              trailing: IconButton(
+                                icon: Icon(Icons.add_shopping_cart),
+                                color: Colors.red,
+                                onPressed: () {
+                                  CartItemModel item = CartItemModel(
+                                    vendorId: snapshot
+                                        .data.documents[index].documentID,
+                                    productId: 'Product${i + 1}',
+                                    quantity: int.parse(_controller.text),
+                                  );
+                                  CartHelper.instance.addToCart(item);
+                                },
+                              ),
+                            ),
+                            TextField(
+                                keyboardType: TextInputType.number,
+                                controller: _controller,
+                                decoration: InputDecoration(
+                                  hintText: "Enter Quantity",
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(5.0),
+                                    borderSide: BorderSide(
+                                      color: Colors.red,
+                                      style: BorderStyle.solid,
+                                    ),
+                                  ),
+                                )),
+                          ],
+                        ));
+                      });
+                },
+              ));
   }
 }
