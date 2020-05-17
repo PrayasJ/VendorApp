@@ -11,6 +11,7 @@ import com.baseflow.googleapiavailability.GoogleApiAvailabilityPlugin;
 import io.flutter.plugins.googlemaps.GoogleMapsPlugin;
 import com.baseflow.location_permissions.LocationPermissionsPlugin;
 import io.flutter.plugins.pathprovider.PathProviderPlugin;
+import io.flutter.plugins.sharedpreferences.SharedPreferencesPlugin;
 
 /**
  * Generated file. Do not edit.
@@ -30,6 +31,7 @@ public final class GeneratedPluginRegistrant {
     GoogleMapsPlugin.registerWith(registry.registrarFor("io.flutter.plugins.googlemaps.GoogleMapsPlugin"));
     LocationPermissionsPlugin.registerWith(registry.registrarFor("com.baseflow.location_permissions.LocationPermissionsPlugin"));
     PathProviderPlugin.registerWith(registry.registrarFor("io.flutter.plugins.pathprovider.PathProviderPlugin"));
+    SharedPreferencesPlugin.registerWith(registry.registrarFor("io.flutter.plugins.sharedpreferences.SharedPreferencesPlugin"));
   }
 
   private static boolean alreadyRegisteredWith(PluginRegistry registry) {
