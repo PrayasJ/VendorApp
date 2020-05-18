@@ -14,6 +14,7 @@ import 'databaseClass.dart';
 import 'homePage.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class MapPage extends StatefulWidget {
   MapPageState createState() => MapPageState();
@@ -46,7 +47,6 @@ class MapPageState extends State<MapPage> {
   String uid;
 
   //Auth auth = new Auth();
-
 
   @override
   void initState() {
@@ -91,7 +91,6 @@ class MapPageState extends State<MapPage> {
       });
     });
 
-
     streamSub = locator
         .getPositionStream(LocationOptions(
             accuracy: LocationAccuracy.best, distanceFilter: 10))
@@ -106,23 +105,23 @@ class MapPageState extends State<MapPage> {
   }
 
   @override
-void addMarkers(){
-  var random = new Random();
-  for (int i=1;i<=5;i++){
-            allMarkers.add(Marker(
-            markerId: MarkerId('Vendor$i'),
-            icon: pinLocationIcon,
-            draggable: false,
-            onTap: () {
-              print('Marker Tapped');
-              index=i-1;
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => display_items()));
-            },
-            position: LatLng(lat + (random.nextDouble() - 0.5) / 100,
-                long + (random.nextDouble() - 0.5) / 100)));
+  void addMarkers() {
+    var random = new Random();
+    for (int i = 1; i <= 5; i++) {
+      allMarkers.add(Marker(
+          markerId: MarkerId('Vendor$i'),
+          icon: pinLocationIcon,
+          draggable: false,
+          onTap: () {
+            print('Marker Tapped');
+            index = i - 1;
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => display_items()));
+          },
+          position: LatLng(lat + (random.nextDouble() - 0.5) / 100,
+              long + (random.nextDouble() - 0.5) / 100)));
+    }
   }
-}
 
   @override
   Widget build(BuildContext context) {
@@ -178,9 +177,9 @@ void addMarkers(){
 
 List<int> count;
 
-int countInit(DocumentSnapshot document){
+int countInit(DocumentSnapshot document) {
   count = [];
-  for(int i=0;i<document.data.length;i++){
+  for (int i = 0; i < document.data.length; i++) {
     count.add(0);
   }
   return document.data.length;
@@ -190,7 +189,6 @@ class display_items extends StatefulWidget {
   @override
   _display_itemsState createState() => _display_itemsState();
 }
-
 
 class _display_itemsState extends State<display_items> {
   // int i=0;
@@ -211,7 +209,7 @@ class _display_itemsState extends State<display_items> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text('List'),
+          // title: Text('List'),
           backgroundColor: Colors.red,
         ),
         floatingActionButton: FloatingActionButton(
@@ -234,57 +232,112 @@ class _display_itemsState extends State<display_items> {
                 stream: Firestore.instance.collection('Vendors').snapshots(),
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) return Text('Loading..');
-                  return ListView.builder(
-                      //itemCount: snapshot.data.documents.length,
-                      itemCount: snapshot.data.documents[index].data.length,
-                      itemBuilder: (BuildContext context, int i) {
-                        TextEditingController _controller =
-                            TextEditingController();
-                        return Card(
-                            child: Column(
-                          mainAxisSize: MainAxisSize.min,
+                  return ListView(
+                    children: <Widget>[
+                      Center(
+                          child: Text("Lorem Ipsum",
+                              style: TextStyle(
+                                fontSize: 20.0,
+                                fontWeight: FontWeight.bold,
+                              ))),
+                      Center(child: Text("Ipsum Food")),
+                      // SizedBox(height: 20.0,),
+                      Divider(
+                        color: Colors.black,
+                        height: 40,
+                        thickness: 0.3,
+                        indent: 40,
+                        endIndent: 40,
+                      ),
+                      Container(
+                        child: Row(
                           children: <Widget>[
-                            ListTile(
-                              leading: Icon(Icons.album),
-                              title: Text(snapshot.data.documents[index]
-                                  ['Product${i + 1}']['name']),
-                              subtitle: Text("Rs. " +
-                                  snapshot
-                                      .data
-                                      .documents[index]['Product${i + 1}']
-                                          ['cost']
-                                      .toString()),
-                              trailing: IconButton(
-                                icon: Icon(Icons.add_shopping_cart),
-                                color: Colors.red,
-                                onPressed: () {
-                                  CartItemModel item = CartItemModel(
-                                    vendorId: snapshot
-                                        .data.documents[index].documentID,
-                                    productId: 'Product${i + 1}',
-                                    quantity: int.parse(_controller.text),
-                                  );
-                                  CartHelper.instance.addToCart(item);
-                                },
+                            Container(
+                              child: Column(
+                                children: <Widget>[
+                                  Row(
+                                    children: <Widget>[
+                                      Icon(Icons.star),
+                                      Text('4.2'),
+                                    ],
+                                  ),
+                                  Text("Taste 88%"),
+                                ],
                               ),
                             ),
-                            QuantityInput(controller: _controller),
-                            // TextField(
-                            //     keyboardType: TextInputType.number,
-                            //     controller: _controller,
-                            //     decoration: InputDecoration(
-                            //       hintText: "Enter Quantity",
-                            //       border: OutlineInputBorder(
-                            //         borderRadius: BorderRadius.circular(5.0),
-                            //         borderSide: BorderSide(
-                            //           color: Colors.red,
-                            //           style: BorderStyle.solid,
-                            //         ),
-                            //       ),
-                            //     )),
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width / 5,
+                            ),
+                            Container(
+                              child: Column(
+                                children: <Widget>[
+                                  Text("29 mins"),
+                                  Text("Delivery Time"),
+                                ],
+                              ),
+                            ),
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width / 5,
+                            ),
+                            Container(
+                              child: Column(
+                                children: <Widget>[
+                                  Text("Rs. 250"),
+                                  Text("For Two"),
+                                ],
+                              ),
+                            ),
                           ],
-                        ));
-                      });
+                        ),
+                      ),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.width / 20,
+                      ),
+                      Container(
+                        height: MediaQuery.of(context).size.height - 150,
+                        width: MediaQuery.of(context).size.width,
+                        child: ListView.builder(
+                            //itemCount: snapshot.data.documents.length,
+                            itemCount:
+                                snapshot.data.documents[index].data.length,
+                            itemBuilder: (BuildContext context, int i) {
+                              TextEditingController _controller =
+                                  TextEditingController();
+                              return Card(
+                                  child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: <Widget>[
+                                  ListTile(
+                                    leading: Icon(Icons.album),
+                                    title: Text(snapshot.data.documents[index]
+                                        ['Product${i + 1}']['name']),
+                                    subtitle: Text("Rs. " +
+                                        snapshot
+                                            .data
+                                            .documents[index]['Product${i + 1}']
+                                                ['cost']
+                                            .toString()),
+                                    trailing: IconButton(
+                                      icon: Icon(Icons.add_shopping_cart),
+                                      color: Colors.red,
+                                      onPressed: () {
+                                        CartItemModel item = CartItemModel(
+                                          vendorId: snapshot
+                                              .data.documents[index].documentID,
+                                          productId: 'Product${i + 1}',
+                                          quantity: int.parse(_controller.text),
+                                        );
+                                        CartHelper.instance.addToCart(item);
+                                      },
+                                    ),
+                                  ),
+                                  QuantityInput(controller: _controller),
+                                ],
+                              ));
+                            }),
+                      )
+                    ],
+                  );
                 },
               ));
   }
